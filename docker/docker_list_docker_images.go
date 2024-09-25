@@ -2,18 +2,22 @@ package docker
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 
 	"github.com/docker/docker/api/types/image"
 )
 
-func ListAllDockerImages() error {
+func ListAllDockerImages() (string, error) {
+
 	images, err := Client.ImageList(context.Background(), image.ListOptions{})
 	if err != nil {
-		return err
+		return "", err
 	}
-	for _, image := range images {
-		fmt.Println(image.Size)
+
+	jsonData, err := json.Marshal(images)
+	if err != nil {
+		return "", err
 	}
-	return nil
+
+	return string(jsonData), nil
 }

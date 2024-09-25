@@ -38,6 +38,8 @@ func Router(app *fiber.App) {
 func RouteMappings(cg fiber.Router) {
 	cg.Post("/CreateWebHook",api.CreateRepoWebhook)
 	cg.Post("/webhook",api.WebHookHandlerApi)
+	cg.Get("/GetAllDockerImages",api.GetAllDockerImages)
+	cg.Get("/GetAllDockerContainers",api.GetAllDockerContainers)
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {

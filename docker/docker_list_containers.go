@@ -2,19 +2,20 @@ package docker
 
 import (
 	"context"
-	"fmt"
+	"encoding/json"
 
 	"github.com/docker/docker/api/types/container"
 )
 
-func ListAllContainers() error {
+func ListAllContainers() (string, error) {
 	containers, err := Client.ContainerList(context.Background(), container.ListOptions{})
 	if err != nil {
-		return err
+		return "", err
 	}
 
-	for _, ctr := range containers {
-		fmt.Printf("%s %s\n", ctr.ID, ctr.Image)
+	jsonData, err := json.Marshal(containers)
+	if err != nil {
+		return "", err
 	}
-	return nil
+	return string(jsonData), err
 }
