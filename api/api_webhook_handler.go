@@ -52,6 +52,24 @@ func WebHookHandlerApi(c *fiber.Ctx) error {
 			}
 		}
 	}
+	if eventType == "workflow_run" {
+		workflowRun, ok := payload["workflow_run"].(map[string]interface{})
+		if !ok {
+			return c.Status(fiber.StatusBadRequest).SendString("Invalid workflow run data")
+		}
+		fmt.Println(workflowRun)
+
+		if conclusion, ok := workflowRun["conclusion"].(string); ok {
+			if conclusion == "success" {
+				fmt.Printf("Workflow run successful: %v\n", workflowRun)
+			} else {
+				fmt.Printf("Workflow run failed or other state: %v\n", workflowRun)
+			}
+		} else {
+			fmt.Println("Conclusion not found or is nil in workflow run.")
+		}
+	}
+
 
 	return c.SendString("Webhook received successfully")
 }
