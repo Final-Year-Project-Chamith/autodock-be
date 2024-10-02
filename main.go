@@ -18,12 +18,11 @@ func main() {
 	})
 	docker.ConnectDocker()
 
-	// Connect To Database
-	// dbConfig.ConnectToMongoDB()
+	
 
-	// Define the API routes
+	
 	apiHandlers.Router(app)
 
-	// Start the server
+	
 	log.Fatal(app.Listen(":8888"))
 }
