@@ -1,7 +1,10 @@
 package api
 
 import (
+	"autodock-be/docker"
+	"autodock-be/dto"
 	"autodock-be/functions"
+
 	"encoding/json"
 	"fmt"
 
@@ -21,55 +24,38 @@ func WebHookHandlerApi(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusForbidden).SendString("Invalid signature")
 	}
 
-	var payload map[string]interface{}
-	if err := json.Unmarshal(body, &payload); err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("Failed to parse JSON")
-	}
-
 	eventType := c.Get("X-GitHub-Event")
 	fmt.Printf("Received GitHub event: %s\n", eventType)
 
 	if eventType == "pull_request" {
-		action, ok := payload["action"].(string)
-		if !ok {
-			return c.Status(fiber.StatusBadRequest).SendString("Invalid pull request event structure")
+		var pullRequestEvent dto.PullRequestEvent
+		if err := json.Unmarshal(body, &pullRequestEvent); err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString("Failed to parse pull request JSON")
 		}
 
-		if action == "closed" {
-			pullRequest, ok := payload["pull_request"].(map[string]interface{})
-			if !ok {
-				return c.Status(fiber.StatusBadRequest).SendString("Invalid pull request data")
-			}
-
-			merged, ok := pullRequest["merged"].(bool)
-			if ok && merged {
-
-				baseBranch := pullRequest["base"].(map[string]interface{})["ref"].(string)
-				if baseBranch == "main" {
-
-					fmt.Printf("Pull request merged into main branch: %v\n", pullRequest)
-				}
+		if pullRequestEvent.Action == "closed" && pullRequestEvent.PullRequest.Merged {
+			baseBranch := pullRequestEvent.PullRequest.Base.Ref
+			if baseBranch == "main" {
+				fmt.Printf("Pull request merged into main branch: %+v\n", pullRequestEvent.PullRequest)
 			}
 		}
 	}
+
 	if eventType == "workflow_run" {
-		workflowRun, ok := payload["workflow_run"].(map[string]interface{})
-		if !ok {
-			return c.Status(fiber.StatusBadRequest).SendString("Invalid workflow run data")
+		var workflowRunEvent dto.WorkflowRunEvent
+		if err := json.Unmarshal(body, &workflowRunEvent); err != nil {
+			return c.Status(fiber.StatusBadRequest).SendString("Failed to parse workflow run JSON")
 		}
-		fmt.Println(workflowRun)
-
-		if conclusion, ok := workflowRun["conclusion"].(string); ok {
-			if conclusion == "success" {
-				fmt.Printf("Workflow run successful: %v\n", workflowRun)
-			} else {
-				fmt.Printf("Workflow run failed or other state: %v\n", workflowRun)
+		fmt.Println(workflowRunEvent.WorkflowRun.Conclusion)
+		if workflowRunEvent.WorkflowRun.Conclusion == "success" {
+			if err := docker.RunDockerComposeDeatched("D:\\Chamith\\Repos\\msg-app\\docker-compose.yml"); err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
 			}
+			fmt.Printf("Workflow run successful: %+v\n", workflowRunEvent.WorkflowRun)
 		} else {
-			fmt.Println("Conclusion not found or is nil in workflow run.")
+			fmt.Printf("Workflow run failed or other state: %+v\n", workflowRunEvent.WorkflowRun)
 		}
 	}
-
 
 	return c.SendString("Webhook received successfully")
 }

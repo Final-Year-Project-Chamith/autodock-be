@@ -18,11 +18,7 @@ func main() {
 	})
 	docker.ConnectDocker()
 
-	
-
-	
 	apiHandlers.Router(app)
 
-	
 	log.Fatal(app.Listen(":8888"))
 }
