@@ -3,6 +3,7 @@ package main
 import (
 	"autodock-be/apiHandlers"
 	"autodock-be/docker"
+	"autodock-be/functions"
 	"fmt"
 	"log"
 
@@ -16,6 +17,7 @@ func main() {
 		AppName:   "AutoDock-BE",
 		BodyLimit: 4000 * 1024,
 	})
+	functions.RemoveGeneratedOuts()
 	docker.ConnectDocker()
 
 	apiHandlers.Router(app)
