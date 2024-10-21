@@ -3,6 +3,7 @@ package git
 import (
 	"autodock-be/docker"
 	"autodock-be/dto"
+	"encoding/json"
 	"errors"
 	"fmt"
 )
@@ -27,4 +28,30 @@ func HandleWorkflowRun(event dto.WorkflowRunEvent) error {
 		fmt.Printf("Workflow run failed or other state: %+v\n", event.WorkflowRun)
 	}
 	return nil
+}
+
+func HandleEventType(body []byte, eventType string) error {
+	switch eventType {
+	case "pull_request":
+		var pullRequestEvent dto.PullRequestEvent
+		if err := json.Unmarshal(body, &pullRequestEvent); err != nil {
+			return err
+		}
+		if err := HandlePullRequest(pullRequestEvent); err != nil {
+			return err
+		}
+	case "workflow_run":
+		var workflowRunEvent dto.WorkflowRunEvent
+		if err := json.Unmarshal(body, &workflowRunEvent); err != nil {
+			return err
+		}
+		if err := HandleWorkflowRun(workflowRunEvent); err != nil {
+			return err
+		}
+	default:
+		return fmt.Errorf("unhandled event type")
+	}
+
+	return nil
+
 }
