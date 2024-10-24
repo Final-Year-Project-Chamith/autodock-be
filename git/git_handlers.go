@@ -20,6 +20,7 @@ func HandlePullRequest(event dto.PullRequestEvent) error {
 
 func HandleWorkflowRun(event dto.WorkflowRunEvent) error {
 	if event.WorkflowRun.Conclusion == "success" {
+		fmt.Println(event.WorkflowRun.Repository.FullName)
 		if err := docker.RunDockerComposeDeatched("D:\\Chamith\\Repos\\msg-app\\docker-compose.yml"); err != nil {
 			return errors.New("failed to run docker compose: " + err.Error())
 		}

@@ -1,6 +1,7 @@
 package dto
 
 type DockerCompose struct {
+	Repo string `json:"repo"`
 	Services []Service `json:"services"`
 }
 

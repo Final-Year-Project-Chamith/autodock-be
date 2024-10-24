@@ -9,20 +9,34 @@ import (
 	"text/template"
 )
 
-func GenerateDockerComposeFile(application dto.DockerCompose) error {
-	tmpl, err := template.ParseFiles("templates\\docker-compose\\docker-compose.tmp")
-	buf := new(strings.Builder)
+func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) error {
+	// Parse the template
+	tmpl, err := template.ParseFiles("templates/docker-compose/docker-compose.tmp")
 	if err != nil {
 		return err
 	}
+
+	buf := new(strings.Builder)
+
 	err = tmpl.Execute(buf, application)
 	if err != nil {
 		return err
 	}
-	file, err := os.Create("outs\\docker-compose.yml")
+
+	dirPath := fmt.Sprintf("outs/var/docker-compose/%s", repoName)
+
+	err = os.MkdirAll(dirPath, os.ModePerm)
 	if err != nil {
-		return err
+		return fmt.Errorf("failed to create directory: %w", err)
 	}
+
+	filePath := fmt.Sprintf("%s/docker-compose.yml", dirPath)
+
+	file, err := os.Create(filePath)
+	if err != nil {
+		return fmt.Errorf("failed to create file: %w", err)
+	}
+
 	defer func(file *os.File) {
 		err := file.Close()
 		if err != nil {
@@ -34,5 +48,6 @@ func GenerateDockerComposeFile(application dto.DockerCompose) error {
 	if err != nil {
 		return fmt.Errorf("failed to write to output file: %w", err)
 	}
+
 	return nil
 }
