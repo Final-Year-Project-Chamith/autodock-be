@@ -1,0 +1,24 @@
+services:
+{{- range .Services }}
+  {{.Name}}:
+    image: {{.Image}}
+    container_name: {{.Container}}
+    ports:
+    {{- range .Ports }}
+      - "{{.}}"
+    {{- end }}
+    
+    {{- if .Volumes }}
+    volumes:
+    {{- range .Volumes }}
+      - "{{.}}"
+    {{- end }}
+    {{- end }}
+
+    {{- if .EnvVars }}
+    environment:
+    {{- range $key, $value := .EnvVars }}
+      - {{$key}}={{$value}}
+    {{- end }}
+    {{- end }}
+{{- end }}

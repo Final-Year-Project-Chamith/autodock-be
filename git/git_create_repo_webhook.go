@@ -12,7 +12,7 @@ func CreateWebHookRepository(owner, repo, token, webhookURL, secret string) erro
 	payload := map[string]interface{}{
 		"name":   "web",
 		"active": true,
-		"events": []string{"push", "pull_request"},
+		"events": []string{"push", "pull_request","workflow_run"},
 		"config": map[string]string{
 			"url":          webhookURL,
 			"content_type": "json",
