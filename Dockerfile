@@ -8,7 +8,7 @@ RUN go get
 
 COPY *.go ./
 
-RUN go build -o /Git
+RUN go build -o /autodock-be
 
 EXPOSE 8888
 
