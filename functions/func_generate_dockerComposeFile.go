@@ -23,7 +23,7 @@ func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) e
 		return err
 	}
 
-	dirPath := fmt.Sprintf("outs/var/docker-compose/%s", repoName)
+	dirPath := fmt.Sprintf("docker-compose/%s", repoName)
 
 	err = os.MkdirAll(dirPath, os.ModePerm)
 	if err != nil {
