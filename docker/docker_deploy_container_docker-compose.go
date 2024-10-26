@@ -7,7 +7,7 @@ import (
 )
 
 func RunDockerComposeDeatched(composeFilePath string) error {
-	cmd := exec.Command("docker-compose", "-f", composeFilePath, "up", "-d")
+	cmd := exec.Command("/usr/local/bin/docker-compose", "-f", composeFilePath, "up", "-d")
 
 	output, err := cmd.CombinedOutput()
 	if err != nil {
