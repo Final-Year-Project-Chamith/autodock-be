@@ -20,7 +20,9 @@ func HandlePullRequest(event dto.PullRequestEvent) error {
 
 func HandleWorkflowRun(event dto.WorkflowRunEvent) error {
 	if event.WorkflowRun.Conclusion == "success" {
-		if err := docker.RunDockerComposeDeatched("D:\\Chamith\\Repos\\msg-app\\docker-compose.yml"); err != nil {
+		fmt.Println(event.WorkflowRun.Repository.FullName)
+		fmt.Println("docker-compose/"+event.WorkflowRun.Repository.FullName+"/docker-compose.yml")
+		if err := docker.RunDockerComposeDeatched("docker-compose/"+event.WorkflowRun.Repository.FullName+"/docker-compose.yml"); err != nil {
 			return errors.New("failed to run docker compose: " + err.Error())
 		}
 		fmt.Printf("Workflow run successful: %+v\n", event.WorkflowRun)
@@ -31,6 +33,7 @@ func HandleWorkflowRun(event dto.WorkflowRunEvent) error {
 }
 
 func HandleEventType(body []byte, eventType string) error {
+	fmt.Println(eventType)
 	switch eventType {
 	case "pull_request":
 		var pullRequestEvent dto.PullRequestEvent
@@ -48,6 +51,8 @@ func HandleEventType(body []byte, eventType string) error {
 		if err := HandleWorkflowRun(workflowRunEvent); err != nil {
 			return err
 		}
+	case "ping":
+		fmt.Println("godak ping")
 	default:
 		return fmt.Errorf("unhandled event type")
 	}

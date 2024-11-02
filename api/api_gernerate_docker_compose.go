@@ -12,7 +12,7 @@ func GenerateDockerComposeFileApi(c *fiber.Ctx) error {
 	if err := c.BodyParser(&inputObj); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
 	}
-	if err := functions.GenerateDockerComposeFile(inputObj); err != nil {
+	if err := functions.GenerateDockerComposeFile(inputObj,inputObj.Repo); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{"error": err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(map[string]string{"status": "Success"})

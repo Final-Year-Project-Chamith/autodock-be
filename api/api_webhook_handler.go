@@ -14,6 +14,7 @@ func WebHookHandlerApi(c *fiber.Ctx) error {
 	if c.Method() != fiber.MethodPost {
 		return c.Status(fiber.StatusMethodNotAllowed).SendString("Invalid request method")
 	}
+	
 	body := c.Body()
 	signature := c.Get("X-Hub-Signature")
 	if !functions.ValidateSignature(body, signature, "Asd@1234") {
