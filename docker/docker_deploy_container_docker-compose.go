@@ -7,14 +7,21 @@ import (
 )
 
 func RunDockerComposeDeatched(composeFilePath string) error {
-	cmd := exec.Command("/usr/local/bin/docker-compose", "-f", composeFilePath, "up", "-d")
-
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Error executing docker-compose up -d: %v", err)
-		return err
+	commands := [][]string{
+		{"down"}, 
+		{"pull"},          
+		{"up", "-d"},      
 	}
 
-	fmt.Printf("Docker Compose Output: %s\n", string(output))
+	for _, args := range commands {
+		cmd := exec.Command("/usr/local/bin/docker-compose", append([]string{"-f", composeFilePath}, args...)...)
+		output, err := cmd.CombinedOutput()
+		if err != nil {
+			log.Printf("Error executing docker-compose %s: %v\nOutput: %s", args[0], err, string(output))
+			return err
+		}
+		fmt.Printf("Docker Compose %s Output: %s\n", args[0], string(output))
+	}
+
 	return nil
 }
