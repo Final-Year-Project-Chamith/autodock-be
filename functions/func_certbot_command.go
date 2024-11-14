@@ -16,6 +16,7 @@ func RunCertbotCommand(domain string, email string) error {
 	
 	output, err := cmd.CombinedOutput()
 	if err != nil {
+		fmt.Println(err)
 		log.Printf("Error executing certbot command: %v", err)
 		return err
 	}
