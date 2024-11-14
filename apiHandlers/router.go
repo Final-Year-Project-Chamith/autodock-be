@@ -42,6 +42,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Get("/GetAllDockerContainers",api.GetAllDockerContainers)
 	cg.Post("/Deploy",api.DeployHandlerApi)
 	cg.Post("/generate/file/docker-compose",api.GenerateDockerComposeFileApi)
+	cg.Post("/generate/nginx",api.GenerateNginxFile)
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {
