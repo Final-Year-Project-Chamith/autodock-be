@@ -8,7 +8,7 @@ import (
 
 func RunCertbotNginxCommand(domain string, email string) error {
 
-	cmd := exec.Command("/usr/bin/certbot", "--nginx", "-d", domain)
+	cmd := exec.Command("/usr/bin/certbot", "--nginx", "-d", domain, "--non-interactive", "--agree-tos", "--email", email)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		log.Printf("Error executing certbot command: %v\nOutput: %s", err, string(output))
