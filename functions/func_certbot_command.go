@@ -13,12 +13,11 @@ func RunCertbotCommand(domain string, email string) error {
 		"--non-interactive", "--agree-tos", "--email", email,
 		"-d", domain)
 
-	
+
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		fmt.Println(err)
-		log.Printf("Error executing certbot command: %v", err)
-		return err
+		log.Printf("Error executing certbot command: %v\nOutput: %s", err, string(output))
+		return fmt.Errorf("certbot failed with error: %v\nOutput: %s", err, string(output))
 	}
 
 	fmt.Printf("Certbot Output: %s\n", string(output))
