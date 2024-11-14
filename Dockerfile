@@ -5,25 +5,26 @@ FROM golang:1.22
 WORKDIR /app
 
 # Copy and install Go dependencies
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the entire application code
 COPY . .
-RUN go mod tidy
-RUN go get
 
 # Compile the Go application
 RUN go build -o /autodock-be
 
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx
-# Set the PATH environment variable to include /usr/sbin
+# Install Nginx and set PATH to include /usr/sbin
+RUN apt-get update && \
+    apt-get install -y nginx && \
+    apt-get install -y certbot python3-certbot-nginx && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Set PATH environment variable to include /usr/sbin for Nginx
 ENV PATH="/usr/sbin:$PATH"
 
-RUN apt-get update && apt-get install -y certbot
-
-
 # Install Docker CLI and Docker Compose
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://get.docker.com -o get-docker.sh && \
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     sh get-docker.sh && \
     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
     -o /usr/local/bin/docker-compose && \
