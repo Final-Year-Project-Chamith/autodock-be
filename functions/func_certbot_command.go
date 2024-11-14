@@ -7,9 +7,9 @@ import (
 )
 
 
-func RunCertbotCommand(domain string, email string) error {
-
-	cmd := exec.Command("/usr/bin/certbot", "certonly", "--standalone",
+func RunCertbotNginxCommand(domain string, email string) error {
+	
+	cmd := exec.Command("/usr/bin/certbot", "certonly", "--nginx",
 		"--non-interactive", "--agree-tos", "--email", email,
 		"-d", domain)
 
