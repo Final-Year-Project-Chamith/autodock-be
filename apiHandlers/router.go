@@ -43,6 +43,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Post("/Deploy",api.DeployHandlerApi)
 	cg.Post("/generate/file/docker-compose",api.GenerateDockerComposeFileApi)
 	cg.Post("/generate/nginx",api.GenerateNginxFile)
+	cg.Post("/run/certbot",api.RunCertbotCmdApi)
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {

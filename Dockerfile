@@ -17,6 +17,9 @@ RUN apt-get update && apt-get install -y nginx
 # Set the PATH environment variable to include /usr/sbin
 ENV PATH="/usr/sbin:$PATH"
 
+RUN apt-get update && apt-get install -y certbot
+
+
 # Install Docker CLI and Docker Compose
 RUN apt-get update && \
     apt-get install -y curl && \
