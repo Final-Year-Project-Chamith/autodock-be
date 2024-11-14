@@ -6,7 +6,7 @@ import (
 )
 
 func TestNginxConfig() error {
-	cmd := exec.Command("nginx", "-t")
+	cmd := exec.Command("/usr/sbin/nginx", "-t")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
 		fmt.Printf("Nginx test failed: %s\n", string(output))
