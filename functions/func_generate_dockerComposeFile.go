@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"os/exec"
 	"strings"
 	"text/template"
 )
@@ -49,20 +48,5 @@ func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) e
 		return fmt.Errorf("failed to write to output file: %w", err)
 	}
 
-	if err := testNginxConfig(); err != nil {
-		return err
-	}
-
-	return nil
-}
-func testNginxConfig() error {
-	cmd := exec.Command("nginx", "-t")
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		fmt.Printf("Nginx test failed: %s\n", string(output))
-		return err
-	}
-
-	fmt.Printf("Nginx test succeeded: %s\n", string(output))
 	return nil
 }

@@ -46,5 +46,5 @@ func GenerateNginxFile(application dto.NginxConf) error {
 		return fmt.Errorf("failed to write to output file: %w", err)
 	}
 
-	return nil
+	return TestNginxConfig()
 }
