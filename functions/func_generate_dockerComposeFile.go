@@ -49,16 +49,20 @@ func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) e
 		return fmt.Errorf("failed to write to output file: %w", err)
 	}
 
-	return testNginxConfig()
+	if err := testNginxConfig(); err != nil {
+		return err
+	}
+
+	return nil
 }
 func testNginxConfig() error {
 	cmd := exec.Command("nginx", "-t")
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Nginx test failed: %s\n", string(output))
+		fmt.Printf("Nginx test failed: %s\n", string(output))
 		return err
 	}
 
-	log.Printf("Nginx test succeeded: %s\n", string(output))
+	fmt.Printf("Nginx test succeeded: %s\n", string(output))
 	return nil
 }
