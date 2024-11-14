@@ -12,6 +12,11 @@ RUN go get
 # Compile the Go application
 RUN go build -o /autodock-be
 
+# Install Nginx
+RUN apt-get update && apt-get install -y nginx
+# Set the PATH environment variable to include /usr/sbin
+ENV PATH="/usr/sbin:$PATH"
+
 # Install Docker CLI and Docker Compose
 RUN apt-get update && \
     apt-get install -y curl && \
