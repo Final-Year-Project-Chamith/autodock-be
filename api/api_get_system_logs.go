@@ -2,6 +2,7 @@ package api
 
 import (
 	"autodock-be/logs"
+	"autodock-be/redis"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -14,10 +15,13 @@ func GetSystemLogs(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
 	}
+	if err := redis.SaveLogsToRedis(redis.RedClient, logs); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
+	}
 	outFile, err := os.Create("system_logs.json")
 	if err != nil {
-		 fmt.Printf("Error creating output file: %v\n", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error":err.Error()})
+		fmt.Printf("Error creating output file: %v\n", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
 	}
 	defer outFile.Close()
 
@@ -28,5 +32,5 @@ func GetSystemLogs(c *fiber.Ctx) error {
 	} else {
 		fmt.Println("System logs saved to system_logs.json")
 	}
-	return c.Status(fiber.StatusOK).JSON(map[string]string{"status":"system logs generated successfully"})
+	return c.Status(fiber.StatusOK).JSON(map[string]string{"status": "system logs generated successfully"})
 }

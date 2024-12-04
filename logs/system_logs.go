@@ -1,18 +1,14 @@
 package logs
 
 import (
+	"autodock-be/dto"
 	"bufio"
 	"fmt"
 	"os"
 	"strings"
 )
 
-type SysLogEntry struct {
-	Timestamp string `json:"timestamp,omitempty"`
-	Message   string `json:"message"`
-}
-
-func GetSystemdLogs() ([]SysLogEntry, error) {
+func GetSystemdLogs() ([]dto.SysLogEntry, error) {
 
 	logFile := "host_logs/messages"
 	file, err := os.Open(logFile)
@@ -21,7 +17,7 @@ func GetSystemdLogs() ([]SysLogEntry, error) {
 	}
 	defer file.Close()
 
-	var logEntries []SysLogEntry
+	var logEntries []dto.SysLogEntry
 	scanner := bufio.NewScanner(file)
 
 	for scanner.Scan() {
@@ -39,14 +35,14 @@ func GetSystemdLogs() ([]SysLogEntry, error) {
 	return logEntries, nil
 }
 
-func parseLogLine(line string) SysLogEntry {
+func parseLogLine(line string) dto.SysLogEntry {
 
 	parts := strings.SplitN(line, " ", 3)
 	if len(parts) == 3 {
-		return SysLogEntry{
+		return dto.SysLogEntry{
 			Timestamp: fmt.Sprintf("%s %s", parts[0], parts[1]),
 			Message:   parts[2],
 		}
 	}
-	return SysLogEntry{Message: line}
+	return dto.SysLogEntry{Message: line}
 }
