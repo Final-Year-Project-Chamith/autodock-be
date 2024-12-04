@@ -13,8 +13,8 @@ type SysLogEntry struct {
 }
 
 func GetSystemdLogs() ([]SysLogEntry, error) {
-	// Update the log file path to use the mounted directory
-	logFile := "/host_logs/messages" // For Rocky Linux use /messages or /syslog if applicable
+
+	logFile := "host_logs/messages"
 	file, err := os.Open(logFile)
 	if err != nil {
 		return nil, fmt.Errorf("error opening log file: %v", err)
@@ -40,11 +40,11 @@ func GetSystemdLogs() ([]SysLogEntry, error) {
 }
 
 func parseLogLine(line string) SysLogEntry {
-	// Assuming typical log format: "Dec 03 12:45:23 HostName Message"
+
 	parts := strings.SplitN(line, " ", 3)
 	if len(parts) == 3 {
 		return SysLogEntry{
-			Timestamp: fmt.Sprintf("%s %s", parts[0], parts[1]), // Combine date and time
+			Timestamp: fmt.Sprintf("%s %s", parts[0], parts[1]),
 			Message:   parts[2],
 		}
 	}
