@@ -11,7 +11,7 @@ var RedClient *redis.Client
 
 func NewRedisClient() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr: "localhost:6379", // Redis server address
+		Addr: "http://localhost:6379", // Redis server address
 		DB:   0,                // Default DB (can be changed)
 	})
 	RedClient = client
