@@ -18,7 +18,7 @@ type LogEntry struct {
 }
 
 func GetDockerContainerLogs(containerId string) error {
-	options := container.LogsOptions{ShowStdout: true, ShowStderr: true, Timestamps: true}
+	options := container.LogsOptions{ShowStdout: true, ShowStderr: true, Timestamps: true,Follow: false}
 	out, err := Client.ContainerLogs(context.Background(), containerId, options)
 	if err != nil {
 		return err

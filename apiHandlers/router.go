@@ -45,6 +45,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Post("/generate/nginx",api.GenerateNginxFile)
 	cg.Post("/run/certbot",api.RunCertbotCmdApi)
 	cg.Get("/container/logs",api.GetContainerLogsApi)
+	cg.Get("/system/logs",api.GetSystemLogs)
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {
