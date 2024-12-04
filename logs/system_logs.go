@@ -1,9 +1,9 @@
 package logs
 
 import (
-	"bytes"
+	"bufio"
 	"fmt"
-	"os/exec"
+	"os"
 	"strings"
 )
 
@@ -13,30 +13,39 @@ type SysLogEntry struct {
 }
 
 func GetSystemdLogs() ([]SysLogEntry, error) {
-	cmd := exec.Command("journalctl", "--no-pager", "--output=short-iso")
-	var out bytes.Buffer
-	cmd.Stdout = &out
-	err := cmd.Run()
+	// Update the log file path to use the mounted directory
+	logFile := "/host_logs/messages" // For Rocky Linux use /messages or /syslog if applicable
+	file, err := os.Open(logFile)
 	if err != nil {
-		return nil, fmt.Errorf("error running journalctl: %v", err)
+		return nil, fmt.Errorf("error opening log file: %v", err)
 	}
+	defer file.Close()
 
-	lines := strings.Split(out.String(), "\n")
 	var logEntries []SysLogEntry
-	for _, line := range lines {
+	scanner := bufio.NewScanner(file)
+
+	for scanner.Scan() {
+		line := scanner.Text()
 		if line == "" {
 			continue
 		}
 		logEntries = append(logEntries, parseLogLine(line))
 	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading log file: %v", err)
+	}
+
 	return logEntries, nil
 }
+
 func parseLogLine(line string) SysLogEntry {
-	parts := strings.SplitN(line, " ", 2)
-	if len(parts) == 2 {
+	// Assuming typical log format: "Dec 03 12:45:23 HostName Message"
+	parts := strings.SplitN(line, " ", 3)
+	if len(parts) == 3 {
 		return SysLogEntry{
-			Timestamp: parts[0],
-			Message:   parts[1],
+			Timestamp: fmt.Sprintf("%s %s", parts[0], parts[1]), // Combine date and time
+			Message:   parts[2],
 		}
 	}
 	return SysLogEntry{Message: line}
