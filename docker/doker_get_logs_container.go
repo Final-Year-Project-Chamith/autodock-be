@@ -11,11 +11,13 @@ import (
 	"github.com/docker/docker/api/types/container"
 )
 
-// LogEntry represents a structured log entry for JSON output
 type LogEntry struct {
-	Timestamp string `json:"timestamp,omitempty"`
-	Message   string `json:"message"`
+	Timestamp  string `json:"timestamp,omitempty"`
+	LogLevel   string `json:"log_level,omitempty"`
+	ContainerID string `json:"container_id,omitempty"`
+	Message    string `json:"message"`
 }
+
 
 func GetDockerContainerLogs(containerId string) error {
 	options := container.LogsOptions{ShowStdout: true, ShowStderr: true, Timestamps: true,Follow: false}
@@ -24,8 +26,6 @@ func GetDockerContainerLogs(containerId string) error {
 		return err
 	}
 	defer out.Close()
-
-	// Buffer for reading logs
 	var logEntries []LogEntry
 	buf := make([]byte, 4096)
 
@@ -37,8 +37,6 @@ func GetDockerContainerLogs(containerId string) error {
 		if n == 0 {
 			break
 		}
-
-		// Split logs by line and parse each line
 		lines := strings.Split(string(buf[:n]), "\n")
 		for _, line := range lines {
 			if line == "" {
@@ -47,8 +45,6 @@ func GetDockerContainerLogs(containerId string) error {
 			logEntries = append(logEntries, parseLogLine(line))
 		}
 	}
-
-	// Write the collected logs to a JSON file
 	file, err := os.Create("container_logs.json")
 	if err != nil {
 		return fmt.Errorf("error creating JSON file: %v", err)
@@ -65,15 +61,24 @@ func GetDockerContainerLogs(containerId string) error {
 	return nil
 }
 
-// parseLogLine parses a single log line into a LogEntry
+
 func parseLogLine(line string) LogEntry {
-	// Split log line into timestamp and message
-	parts := strings.SplitN(line, " ", 2)
-	if len(parts) == 2 {
-		return LogEntry{
-			Timestamp: parts[0],
-			Message:   parts[1],
-		}
+
+	parts := strings.Fields(line)
+	logEntry := LogEntry{}
+
+	if len(parts) > 0 {
+		logEntry.Timestamp = parts[0] 
 	}
-	return LogEntry{Message: line}
+	if len(parts) > 1 {
+		logEntry.LogLevel = parts[1] 
+	}
+	if len(parts) > 2 && strings.HasPrefix(parts[2], "Container") {
+		logEntry.ContainerID = strings.TrimPrefix(parts[2], "Container")
+	}
+	if len(parts) > 3 {
+		logEntry.Message = strings.Join(parts[3:], " ")
+	}
+
+	return logEntry
 }
