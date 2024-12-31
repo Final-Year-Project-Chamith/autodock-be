@@ -1,29 +1,25 @@
 package logs
 
 import (
-	"fmt"
+	"encoding/json"
 	"io/ioutil"
 	"log"
-	"path/filepath"
 )
 
-func GetContainerLogs() error {
-	logsDir := "/logs_stor"
-	files, err := ioutil.ReadDir(logsDir)
+func GetContainerLogs() (interface{}, error) {
+	logsFile := "/logs_stor/container_logs/all_containers_logs.json"
+
+	// Read the JSON file
+	content, err := ioutil.ReadFile(logsFile)
 	if err != nil {
-		log.Fatalf("Failed to read logs directory: %v", err)
-		return err
+		log.Printf("Failed to read log file: %v", err)
+		return nil, err
 	}
-	for _, file := range files {
-		if !file.IsDir() && filepath.Ext(file.Name()) == ".log" {
-			logFilePath := filepath.Join(logsDir, file.Name())
-			content, err := ioutil.ReadFile(logFilePath)
-			if err != nil {
-				log.Printf("Failed to read log file %s: %v", logFilePath, err)
-				continue
-			}
-			fmt.Printf("Logs from %s:\n%s\n", file.Name(), content)
-		}
+
+	var logs interface{}
+	if err := json.Unmarshal(content, &logs); err != nil {
+		log.Printf("Failed to parse JSON: %v", err)
+		return nil, err
 	}
-	return nil
+	return logs, nil
 }

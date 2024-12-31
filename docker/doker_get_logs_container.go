@@ -40,7 +40,7 @@ func GetDockerContainerLogs(containerId string) error {
 		lines := strings.Split(string(buf[:n]), "\n")
 		for _, line := range lines {
 			if line == "" {
-				continue
+				continue 
 			}
 			logEntries = append(logEntries, parseLogLine(line))
 		}
@@ -63,7 +63,7 @@ func GetDockerContainerLogs(containerId string) error {
 
 
 func parseLogLine(line string) LogEntry {
-
+	fmt.Println("Raw Log Line:", line)
 	parts := strings.Fields(line)
 	logEntry := LogEntry{}
 
