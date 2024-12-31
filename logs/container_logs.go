@@ -7,7 +7,7 @@ import (
 )
 
 func GetContainerLogs() (interface{}, error) {
-	logsFile := "/logs_stor/container_logs/all_containers_logs.json"
+	logsFile := "/logs_stor/all_containers_logs.json"
 
 	// Read the JSON file
 	content, err := ioutil.ReadFile(logsFile)
