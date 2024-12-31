@@ -3,9 +3,7 @@ package api
 import (
 	"autodock-be/functions"
 	"autodock-be/git"
-
 	"fmt"
-
 	"github.com/gofiber/fiber/v2"
 )
 

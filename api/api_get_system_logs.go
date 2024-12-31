@@ -32,5 +32,5 @@ func GetSystemLogs(c *fiber.Ctx) error {
 	} else {
 		fmt.Println("System logs saved to system_logs.json")
 	}
-	return c.Status(fiber.StatusOK).JSON(map[string]string{"status": "system logs generated successfully"})
+	return c.SendFile("system_logs.json")
 }
