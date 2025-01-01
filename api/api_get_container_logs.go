@@ -8,9 +8,9 @@ import (
 
 func GetContainerLogsApi(c *fiber.Ctx) error {
 	//containerId := c.Query("containerId")
-	log, err := logs.GetContainerLogs()
+	_, err := logs.GetContainerLogs()
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
 	}
-	return c.Status(fiber.StatusOK).JSON(log)
+	return c.SendFile("/app/logs_stor/all_containers_logs.json")
 }
