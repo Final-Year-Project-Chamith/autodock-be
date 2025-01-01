@@ -10,5 +10,6 @@ func GetContainerLogsApi(c *fiber.Ctx) error {
 	// if err != nil {
 	// 	return c.Status(fiber.StatusInternalServerError).JSON(map[string]string{"error": err.Error()})
 	// }
-	return c.Status(fiber.StatusOK).JSON("/host_logs/all_containers_logs.json")
+	return c.Status(fiber.StatusOK).JSON("/logs_stor/all_containers_logs.json")
 }
+ 
