@@ -8,11 +8,11 @@ import (
 )
 
 func GetContainerLogs() (interface{}, error) {
-	logsFile := "/logs_stor/all_containers_logs.json"
+	logsFile := "/app/logs_stor/all_containers_logs.json"
 
 	// Debug: Check the directory structure
 	log.Println("Checking logs_stor directory:")
-	files, err := ioutil.ReadDir("/logs_stor/")
+	files, err := ioutil.ReadDir("/app/logs_stor/")
 	if err != nil {
 		log.Printf("Failed to read directory: %v", err)
 		return nil, fmt.Errorf("failed to read logs directory: %w", err)
