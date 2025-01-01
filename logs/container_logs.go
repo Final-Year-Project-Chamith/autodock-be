@@ -1,6 +1,7 @@
 package logs
 
 import (
+	"autodock-be/dto"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -29,7 +30,7 @@ func GetContainerLogs() (interface{}, error) {
 	}
 
 	// Parse the JSON content
-	var logs interface{}
+	var logs dto.ContainerLogs
 	if err := json.Unmarshal(content, &logs); err != nil {
 		log.Printf("Failed to parse JSON: %v", err)
 		return nil, fmt.Errorf("invalid JSON format: %w", err)
