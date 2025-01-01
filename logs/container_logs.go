@@ -1,12 +1,14 @@
 package logs
 
 import (
+	"autodock-be/dto"
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
 )
 
-func GetContainerLogs() ([]byte, error) {
+func GetContainerLogs() (interface{}, error) {
 	logsFile := "/app/logs_stor/all_containers_logs.json"
 
 	// Debug: Check the directory structure
@@ -28,6 +30,11 @@ func GetContainerLogs() ([]byte, error) {
 	}
 
 	// Parse the JSON content
+	var logs []dto.ContainerLogs
+	if err := json.Unmarshal(content, &logs); err != nil {
+		log.Printf("Failed to parse JSON: %v", err)
+		return nil, fmt.Errorf("invalid JSON format: %w", err)
+	}
 
-	return content, nil
+	return logs, nil
 }
