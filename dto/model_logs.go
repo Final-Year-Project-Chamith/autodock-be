@@ -5,7 +5,7 @@ type SysLogEntry struct {
 	Message   string `json:"message"`
 }
 
-type ContainerLogs struct {
+type ContainerLogs []struct {
 	Log    string `json:"log,omitempty"`
 	Stream string `json:"stream"`
 	Time   string `json:"time"`
