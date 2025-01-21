@@ -20,8 +20,6 @@ func GenerateDockerComposeCMD() *cobra.Command {
 			if serviceName == "" || imageName == "" || containerName == "" {
 				return fmt.Errorf("service name, image, and container name are required")
 			}
-
-			// Create service from input flags
 			service := dto.Service{
 				Name:      serviceName,
 				Image:     imageName,

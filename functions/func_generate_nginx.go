@@ -9,8 +9,8 @@ import (
 	"text/template"
 )
 
-func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) error {
-	tmpl, err := template.ParseFiles("templates/docker-compose/docker-compose.tmp")
+func GenerateNginxFile(application dto.NginxConf) error {
+	tmpl, err := template.ParseFiles("templates/nginx/nginx-conf.tmp")
 	if err != nil {
 		return err
 	}
@@ -22,14 +22,12 @@ func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) e
 		return err
 	}
 
-	dirPath := fmt.Sprintf("docker-compose/%s", repoName)
-
-	err = os.MkdirAll(dirPath, os.ModePerm)
+	err = os.MkdirAll("nginx.conf", os.ModePerm)
 	if err != nil {
 		return fmt.Errorf("failed to create directory: %w", err)
 	}
 
-	filePath := fmt.Sprintf("%s/docker-compose.yml", dirPath)
+	filePath := fmt.Sprintf("nginx.conf/%s.conf", application.ServerName)
 
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -48,5 +46,5 @@ func GenerateDockerComposeFile(application dto.DockerCompose, repoName string) e
 		return fmt.Errorf("failed to write to output file: %w", err)
 	}
 
-	return nil
+	return TestNginxConfig()
 }
