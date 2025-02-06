@@ -5,7 +5,6 @@ import (
 	"autodock-be/cmd"
 	"autodock-be/docker"
 	"autodock-be/functions"
-	"autodock-be/redis"
 	"fmt"
 	"log"
 	"os"
@@ -35,7 +34,7 @@ func main() {
 			AppName:   "AutoDock-BE",
 			BodyLimit: 4000 * 1024,
 		})
-		redis.NewRedisClient()
+		//redis.NewRedisClient()
 		functions.RemoveGeneratedOuts()
 		docker.ConnectDocker()
 
