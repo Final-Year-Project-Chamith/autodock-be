@@ -6,22 +6,23 @@ import (
 	"os/exec"
 )
 
-func RunCertbotManualDNS(domain string) error {
-	cmd := exec.Command("certbot",
+func RunCertbotWebroot(domain, email, webroot string) error {
+	cmd := exec.Command("sudo", "certbot", "certonly",
+		"--webroot",
+		"-w", webroot,
 		"-d", domain,
-		"--manual",
-		"--preferred-challenges", "dns",
-		"certonly",
 		"--non-interactive",
 		"--agree-tos",
+		"--email", email,
 	)
 
+	// Capture output and error
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Error executing certbot command: %v\nOutput: %s", err, string(output))
-		return fmt.Errorf("certbot failed with error: %v\nOutput: %s", err, string(output))
+		log.Printf("Error executing certbot command: %v\nOutput:\n%s", err, string(output))
+		return fmt.Errorf("certbot failed: %v\nOutput:\n%s", err, string(output))
 	}
 
-	fmt.Printf("Certbot Output: %s\n", string(output))
+	fmt.Printf("Certbot Output:\n%s\n", string(output))
 	return nil
 }
