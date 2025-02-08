@@ -7,7 +7,7 @@ import (
 )
 
 func RunCertbotWebroot(domain, email, webroot string) error {
-	cmd := exec.Command("sudo", "certbot", "certonly",
+	cmd := exec.Command("certbot", "certonly",
 		"--webroot",
 		"-w", webroot,
 		"-d", domain,
