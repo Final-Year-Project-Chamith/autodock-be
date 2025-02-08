@@ -7,7 +7,7 @@ import (
 )
 
 func RunCertbotManualDNS(domain string) error {
-	cmd := exec.Command("sudo", "certbot",
+	cmd := exec.Command("certbot",
 		"-d", domain,
 		"--manual",
 		"--preferred-challenges", "dns",
