@@ -2,27 +2,31 @@ package functions
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 )
 
-func RunCertbotWebroot(domain, email, webroot string) error {
-	cmd := exec.Command("certbot", "certonly",
-		"--webroot",
-		"-w", webroot,
-		"-d", domain,
-		"--non-interactive",
-		"--agree-tos",
-		"--email", email,
-	)
-
-	// Capture output and error
-	output, err := cmd.CombinedOutput()
-	if err != nil {
-		log.Printf("Error executing certbot command: %v\nOutput:\n%s", err, string(output))
-		return fmt.Errorf("certbot failed: %v\nOutput:\n%s", err, string(output))
+func RunCertbot(domain string) error {
+	// Check Certbot version
+	versionCmd := exec.Command("certbot", "--version")
+	versionOutput, versionErr := versionCmd.CombinedOutput()
+	if versionErr != nil {
+		return fmt.Errorf("error checking certbot version: %v\nOutput: %s", versionErr, string(versionOutput))
 	}
 
-	fmt.Printf("Certbot Output:\n%s\n", string(output))
+	fmt.Println("Certbot Version:", string(versionOutput))
+
+	// Define the certbot command with non-interactive options
+	cmd := exec.Command("certbot", "--nginx", "-d", domain, "--non-interactive", "--agree-tos", "-m", "chamith.eos@gmail.com")
+
+	// Capture the output and error
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("error executing certbot command: %v\nOutput: %s", err, string(output))
+	}
+
+	// Print the output
+	fmt.Println("Command output:")
+	fmt.Println(string(output))
+
 	return nil
 }

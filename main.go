@@ -34,7 +34,6 @@ func main() {
 			AppName:   "AutoDock-BE",
 			BodyLimit: 4000 * 1024,
 		})
-		//redis.NewRedisClient()
 		functions.RemoveGeneratedOuts()
 		docker.ConnectDocker()
 

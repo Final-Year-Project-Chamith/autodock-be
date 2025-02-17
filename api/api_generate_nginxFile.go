@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func GenerateNginxFile(c *fiber.Ctx)error{
+func  GenerateNginxFile(c *fiber.Ctx)error{
 	inoutObj := dto.NginxConf{}
 	if err := c.BodyParser(&inoutObj); err != nil{
 		return c.Status(fiber.StatusBadRequest).JSON(map[string]string{"error":err.Error()})
