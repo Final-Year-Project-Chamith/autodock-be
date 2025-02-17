@@ -6,8 +6,17 @@ import (
 )
 
 func RunCertbot(domain string) error {
-	// Define the certbot command and arguments
-	cmd := exec.Command("certbot", "--nginx", "-d", domain)
+	// Check Certbot version
+	versionCmd := exec.Command("certbot", "--version")
+	versionOutput, versionErr := versionCmd.CombinedOutput()
+	if versionErr != nil {
+		return fmt.Errorf("error checking certbot version: %v\nOutput: %s", versionErr, string(versionOutput))
+	}
+
+	fmt.Println("Certbot Version:", string(versionOutput))
+
+	// Define the certbot command with non-interactive options
+	cmd := exec.Command("certbot", "--nginx", "-d", domain, "--non-interactive", "--agree-tos", "-m", "chamith.eos@gmail.com")
 
 	// Capture the output and error
 	output, err := cmd.CombinedOutput()
