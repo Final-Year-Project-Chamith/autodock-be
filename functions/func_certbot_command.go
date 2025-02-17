@@ -8,18 +8,13 @@ import (
 
 // GenerateCert writes a certbot script inside the mounted folder and executes it on the VM
 func GenerateCert(domain string) error {
-	// Define the script content
-	scriptContent := fmt.Sprintf(`#!/bin/bash
-certbot --nginx -d %s --non-interactive --agree-tos -m chamith.eos@gmail.com --redirect
-`, domain)
 
 	// Define paths
-	containerScriptPath := "/certbot/certbot_script.sh" // Inside container (mounted)
-	vmScriptPath := "/home/admin/certbot/certbot_script.sh" // Inside VM
+	containerScriptPath := "/certbot/certbot_" + domain + ".sh"     // Inside container (mounted)
+	vmScriptPath := "/home/admin/certbot/certbot_" + domain + ".sh" // Inside VM
 
-	// Step 1: Create the script inside the container (mounted in VM)
-	if err := os.WriteFile(containerScriptPath, []byte(scriptContent), 0700); err != nil {
-		return fmt.Errorf("failed to create script file in container: %v", err)
+	if err := GenerateCertbotSHFile(domain); err != nil {
+		return err
 	}
 
 	// Step 2: Execute the script on the VM
