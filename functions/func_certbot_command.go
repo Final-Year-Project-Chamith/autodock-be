@@ -2,31 +2,39 @@ package functions
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 )
 
-func RunCertbot(domain string) error {
-	// Check Certbot version
-	versionCmd := exec.Command("certbot", "--version")
-	versionOutput, versionErr := versionCmd.CombinedOutput()
-	if versionErr != nil {
-		return fmt.Errorf("error checking certbot version: %v\nOutput: %s", versionErr, string(versionOutput))
+// GenerateCert writes a certbot script inside the mounted folder and executes it on the VM
+func GenerateCert(domain string) error {
+	// Define the script content
+	scriptContent := fmt.Sprintf(`#!/bin/bash
+certbot --nginx -d %s --non-interactive --agree-tos -m chamith.eos@gmail.com --redirect
+`, domain)
+
+	// Define paths
+	containerScriptPath := "/certbot/certbot_script.sh" // Inside container (mounted)
+	vmScriptPath := "/home/admin/certbot/certbot_script.sh" // Inside VM
+
+	// Step 1: Create the script inside the container (mounted in VM)
+	if err := os.WriteFile(containerScriptPath, []byte(scriptContent), 0700); err != nil {
+		return fmt.Errorf("failed to create script file in container: %v", err)
 	}
 
-	fmt.Println("Certbot Version:", string(versionOutput))
-
-	// Define the certbot command with non-interactive options
-	cmd := exec.Command("certbot", "--nginx", "-d", domain, "--non-interactive", "--agree-tos", "-m", "chamith.eos@gmail.com")
-
-	// Capture the output and error
+	// Step 2: Execute the script on the VM
+	cmd := exec.Command("bash", "-c", vmScriptPath)
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		return fmt.Errorf("error executing certbot command: %v\nOutput: %s", err, string(output))
+		return fmt.Errorf("error executing script on VM: %v\nOutput: %s", err, string(output))
 	}
 
-	// Print the output
-	fmt.Println("Command output:")
-	fmt.Println(string(output))
+	// Step 3: Delete the script after execution from VM
+	if err := os.Remove(containerScriptPath); err != nil {
+		return fmt.Errorf("failed to delete script file on VM: %v", err)
+	}
 
+	fmt.Println("✅ SSL Certificate generated successfully for:", domain)
+	fmt.Println("📜 Output:", string(output))
 	return nil
 }
