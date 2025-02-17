@@ -2,19 +2,22 @@ package functions
 
 import (
 	"fmt"
-	"log"
 	"os/exec"
 )
 
-func RunCertbotNginxCommand(domain string, email string) error {
+func RunCertbot(domain string) error {
+	// Define the certbot command and arguments
+	cmd := exec.Command("certbot", "--nginx", "-d", domain)
 
-	cmd := exec.Command("/usr/bin/certbot", "--nginx", "-d", domain, "--non-interactive", "--agree-tos", "--email", email)
+	// Capture the output and error
 	output, err := cmd.CombinedOutput()
 	if err != nil {
-		log.Printf("Error executing certbot command: %v\nOutput: %s", err, string(output))
-		return fmt.Errorf("certbot failed with error: %v\nOutput: %s", err, string(output))
+		return fmt.Errorf("error executing certbot command: %v\nOutput: %s", err, string(output))
 	}
 
-	fmt.Printf("Certbot Output: %s\n", string(output))
+	// Print the output
+	fmt.Println("Command output:")
+	fmt.Println(string(output))
+
 	return nil
 }
