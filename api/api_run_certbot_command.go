@@ -10,7 +10,7 @@ func RunCertbotCmdApi(c *fiber.Ctx) error {
 	domain := c.Query("domain")
 	//email := c.Query("email")
 
-	if err := functions.GenerateCert(domain); err != nil{
+	if err := functions.GenerateSSL(domain,"chamith.eos@gmail.com"); err != nil{
 		return c.Status(fiber.StatusOK).JSON(map[string]string{"error":err.Error()})
 	}
 	return c.Status(fiber.StatusOK).JSON(map[string]string{"status": "certbot command successfull"})
