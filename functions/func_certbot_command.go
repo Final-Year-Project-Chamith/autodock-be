@@ -6,9 +6,11 @@ import (
 )
 
 func GenerateSSL(domain string, email string) error {
+	fmt.Println("stop niginx 1")
 	if err := StopNginxConfig(); err != nil{
 		return err
 	}
+	fmt.Println("stop niginx 2")
 	cmd := exec.Command("certbot", "certonly", "--standalone", "-d", domain, "--non-interactive", "--agree-tos", "--chamith.eos@gmail.com", email)
 
 	output, err := cmd.CombinedOutput()
