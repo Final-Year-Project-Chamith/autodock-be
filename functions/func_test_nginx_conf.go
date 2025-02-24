@@ -18,25 +18,22 @@ func TestNginxConfig() error {
 }
 
 func StopNginxConfig() error {
-	stopCmd := exec.Command("systemctl", "stop", "nginx")
-	stopOutput, stopErr := stopCmd.CombinedOutput()
-	if stopErr != nil {
-		fmt.Printf("Failed to stop Nginx: %s\n", string(stopOutput))
-		return stopErr
+	cmd := exec.Command("/usr/sbin/nginx", "-s", "stop")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to stop Nginx: %v\nOutput: %s", err, string(output))
 	}
-
 	fmt.Println("Nginx stopped successfully.")
 	return nil
 }
+
+// StartNginxConfig starts Nginx by directly calling the Nginx executable.
 func StartNginxConfig() error {
-	stopCmd := exec.Command("systemctl", "start", "nginx")
-	stopOutput, stopErr := stopCmd.CombinedOutput()
-	if stopErr != nil {
-		fmt.Printf("Failed to stop Nginx: %s\n", string(stopOutput))
-		return stopErr
+	cmd := exec.Command("/usr/sbin/nginx")
+	output, err := cmd.CombinedOutput()
+	if err != nil {
+		return fmt.Errorf("failed to start Nginx: %v\nOutput: %s", err, string(output))
 	}
-
-	fmt.Println("Nginx stopped successfully.")
+	fmt.Println("Nginx started successfully.")
 	return nil
 }
-
