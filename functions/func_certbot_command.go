@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-func generateSSL(domain string, email string) error {
+func GenerateSSL(domain string, email string) error {
 	if err := StopNginxConfig(); err != nil{
 		return err
 	}
