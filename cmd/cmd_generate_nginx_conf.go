@@ -22,7 +22,7 @@ func GenerateNginxConf() *cobra.Command {
 				ServerName: domain,
 				Port:       port,
 			}
-			if err := functions.GenerateNginxFile(nginxConf); err != nil {
+			if err := functions.GenerateNginxFileCMD(nginxConf); err != nil {
 				return err
 			}
 			fmt.Println("nginx configuration file generated successfully!")
