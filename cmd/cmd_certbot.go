@@ -11,7 +11,6 @@ import (
 func CertbotCmd() *cobra.Command {
 	var domain string
 
-	// Define the certbot command
 	cmd := &cobra.Command{
 		Use:   "certbot",
 		Short: "Run certbot for SSL certificate issuance",

@@ -24,6 +24,7 @@ func main() {
 		functions.RemoveGeneratedOuts()
 		rootCmd.AddCommand(cmd.GenerateDockerComposeCMD())
 		rootCmd.AddCommand(cmd.CertbotCmd())
+		rootCmd.AddCommand(cmd.GenerateNginxConf())
 
 		if err := rootCmd.Execute(); err != nil {
 			fmt.Println(err)
