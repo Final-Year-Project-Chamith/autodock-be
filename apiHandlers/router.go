@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/websocket/v2"
 )
 
 func Router(app *fiber.App) {
@@ -46,6 +47,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Post("/run/certbot",api.RunCertbotCmdApi)
 	cg.Get("/container/logs",api.GetContainerLogsApi)
 	cg.Get("/system/logs",api.GetSystemLogs)
+	cg.Get("/get/metrices", websocket.New(api.GetSystemMetrices))
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {

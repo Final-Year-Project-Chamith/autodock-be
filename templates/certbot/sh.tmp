@@ -1,0 +1,2 @@
+#!/bin/bash
+certbot --nginx -d {{ .Domain }} --non-interactive --agree-tos -m chamith.eos@gmail.com --redirect

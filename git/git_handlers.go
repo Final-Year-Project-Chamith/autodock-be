@@ -32,7 +32,7 @@ func HandleWorkflowRun(event dto.WorkflowRunEvent) error {
 	return nil
 }
 
-func HandleEventType(body []byte, eventType string) error {
+func   HandleEventType(body []byte, eventType string) error {
 	fmt.Println(eventType)
 	switch eventType {
 	case "pull_request":
