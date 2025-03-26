@@ -1,15 +1,16 @@
-# Stage 1: Build the Go binary
+# Stage 1: Build the Go binary statically
 FROM golang:1.22 AS builder
 
 WORKDIR /app
 COPY . .
 RUN go mod tidy
-RUN go build -o /autodock-be
+# Disable CGO to produce a fully static binary
+RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o /autodock-be .
 
 # Stage 2: Create the runtime image
 FROM debian:bullseye-slim
 
-# Install required packages: Nginx, certbot, and its nginx plugin, curl, and ca-certificates
+# Install required packages: Nginx, certbot and its plugin, and other dependencies
 RUN apt-get update && apt-get install -y \
     nginx \
     python3-certbot-nginx \
@@ -26,17 +27,13 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     chmod +x /usr/local/bin/docker-compose && \
     rm get-docker.sh
 
-# Copy the built Go binary from the builder stage
+# Copy the statically built binary from the builder stage
 COPY --from=builder /autodock-be /autodock-be
 
-# Expose necessary ports
-# Port 8888 is for the Go Fiber application and port 80 is used by Nginx (for HTTP challenges, etc.)
+# Expose necessary ports: 8888 for your app and 80 for Nginx
 EXPOSE 8888 80
 
-# Create an entrypoint script to start Nginx and then your application
+# Create an entrypoint script to start Nginx and your app
 RUN echo '#!/bin/bash\nservice nginx start\n/autodock-be' > /entrypoint.sh && chmod +x /entrypoint.sh
-
-# Set the PATH to include /usr/sbin so certbot and nginx can be found
-ENV PATH="/usr/sbin:$PATH"
 
 CMD ["/entrypoint.sh"]
