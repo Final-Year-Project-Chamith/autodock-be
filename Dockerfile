@@ -3,6 +3,7 @@ FROM golang:1.22 AS builder
 
 WORKDIR /app
 COPY . .
+COPY ./templates ./templates
 RUN go mod tidy
 # Disable CGO to produce a fully static binary
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o /autodock-be .
