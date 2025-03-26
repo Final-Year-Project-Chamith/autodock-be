@@ -1,17 +1,22 @@
-# Stage 1: Build the Go binary statically
+# Stage 1: Build the Go binary along with all project files
 FROM golang:1.22 AS builder
 
 WORKDIR /app
-COPY . .
-COPY ./templates ./templates
+
+# Copy go.mod and go.sum first for caching dependencies
+COPY go.mod go.sum ./
 RUN go mod tidy
-# Disable CGO to produce a fully static binary
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o /autodock-be .
+
+# Copy the entire project including templates
+COPY . .
+
+# Build the Go application
+RUN go build -o /autodock-be
 
 # Stage 2: Create the runtime image
 FROM debian:bullseye-slim
 
-# Install required packages: Nginx, certbot and its plugin, and other dependencies
+# Install required packages: Nginx, certbot and its nginx plugin, curl, and certificates
 RUN apt-get update && apt-get install -y \
     nginx \
     python3-certbot-nginx \
@@ -28,13 +33,15 @@ RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     chmod +x /usr/local/bin/docker-compose && \
     rm get-docker.sh
 
-# Copy the statically built binary from the builder stage
-COPY --from=builder /autodock-be /autodock-be
+# Set working directory in the final image
+WORKDIR /app
 
-# Expose necessary ports: 8888 for your app and 80 for Nginx
+# Copy the built binary and the templates directory from the builder stage
+COPY --from=builder /autodock-be /autodock-be
+COPY --from=builder /app/templates ./templates
+
+# Expose application and HTTP challenge ports
 EXPOSE 8888 80
 
-# Create an entrypoint script to start Nginx and your app
-RUN echo '#!/bin/bash\nservice nginx start\n/autodock-be' > /entrypoint.sh && chmod +x /entrypoint.sh
-
-CMD ["/entrypoint.sh"]
+# Run the application
+CMD ["/autodock-be"]
