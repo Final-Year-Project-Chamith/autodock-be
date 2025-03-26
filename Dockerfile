@@ -34,7 +34,7 @@ RUN apt-get update && \
     rm get-docker.sh
 
 # Expose the application port
-EXPOSE 8888
+EXPOSE 8888 80
 
 # Command to run the application
 CMD [ "/autodock-be" ]
