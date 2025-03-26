@@ -1,40 +1,42 @@
-# Start from the official Golang image
-FROM golang:1.22
+# Stage 1: Build the Go binary
+FROM golang:1.22 AS builder
 
-# Set up the working directory
 WORKDIR /app
-
-# Copy and install Go dependencies
 COPY . .
 RUN go mod tidy
-RUN go get
-
-# Compile the Go application
 RUN go build -o /autodock-be
 
-# Install Nginx
-RUN apt-get update && apt-get install -y nginx
-# Set the PATH environment variable to include /usr/sbin
-RUN apt-get update && \
-    apt-get install -y python3-certbot-nginx
+# Stage 2: Create the runtime image
+FROM debian:bullseye-slim
 
-ENV PATH="/usr/sbin:$PATH"
-
-RUN apt-get update && apt-get install -y certbot
-
+# Install required packages: Nginx, certbot, and its nginx plugin, curl, and ca-certificates
+RUN apt-get update && apt-get install -y \
+    nginx \
+    python3-certbot-nginx \
+    certbot \
+    curl \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install Docker CLI and Docker Compose
-RUN apt-get update && \
-    apt-get install -y curl && \
-    curl -fsSL https://get.docker.com -o get-docker.sh && \
+RUN curl -fsSL https://get.docker.com -o get-docker.sh && \
     sh get-docker.sh && \
     curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" \
     -o /usr/local/bin/docker-compose && \
     chmod +x /usr/local/bin/docker-compose && \
     rm get-docker.sh
 
-# Expose the application port
-EXPOSE 8888
+# Copy the built Go binary from the builder stage
+COPY --from=builder /autodock-be /autodock-be
 
-# Command to run the application
-CMD [ "/autodock-be" ]
+# Expose necessary ports
+# Port 8888 is for the Go Fiber application and port 80 is used by Nginx (for HTTP challenges, etc.)
+EXPOSE 8888 80
+
+# Create an entrypoint script to start Nginx and then your application
+RUN echo '#!/bin/bash\nservice nginx start\n/autodock-be' > /entrypoint.sh && chmod +x /entrypoint.sh
+
+# Set the PATH to include /usr/sbin so certbot and nginx can be found
+ENV PATH="/usr/sbin:$PATH"
+
+CMD ["/entrypoint.sh"]
