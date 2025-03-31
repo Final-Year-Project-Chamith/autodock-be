@@ -49,6 +49,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Get("/get/container/logs/containerId",api.GetContainerLogsApi)
 	cg.Get("/system/logs",api.GetSystemLogs)
 	cg.Get("/get/metrices", websocket.New(api.GetSystemMetrices))
+	cg.Get("/get/container/logs/", websocket.New(api.StreamContainerLogsWS))
 }
 func DefaultMappings(cg fiber.Router) {
 	cg.Get("/", func(c *fiber.Ctx) error {
