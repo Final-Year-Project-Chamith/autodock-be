@@ -45,7 +45,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Post("/generate/file/docker-compose",api.GenerateDockerComposeFileApi)
 	cg.Post("/generate/nginx",api.GenerateNginxFile)
 	cg.Post("/run/certbot",api.RunCertbotCmdApi)
-	cg.Get("/container/logs",api.GetContainerLogsApi)
+	cg.Get("/container/log",api.GetContainerLogsApi)
 	cg.Get("/system/logs",api.GetSystemLogs)
 	cg.Get("/get/metrices", websocket.New(api.GetSystemMetrices))
 }
