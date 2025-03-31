@@ -46,6 +46,7 @@ func RouteMappings(cg fiber.Router) {
 	cg.Post("/generate/nginx",api.GenerateNginxFile)
 	cg.Post("/run/certbot",api.RunCertbotCmdApi)
 	cg.Get("/container/log",api.GetContainerLogsApi)
+	cg.Get("/get/container/logs/containerId",api.GetContainerLogsApi)
 	cg.Get("/system/logs",api.GetSystemLogs)
 	cg.Get("/get/metrices", websocket.New(api.GetSystemMetrices))
 }
