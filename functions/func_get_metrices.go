@@ -27,7 +27,7 @@ func GetUsageMetrices() (*dto.Metrics, error) {
 	fmt.Println("total ram", ramPercentage.Total)
 	fmt.Println("total cpu", cpuPercentage[0])
 	fmt.Println("total storage",diskUsage.Total)
-	metrics.CPUUsage = cpuPercentage[0]*100
+	metrics.CPUUsage = cpuPercentage[0]
 	metrics.MemoryUsage = ramPercentage.UsedPercent
 	metrics.DiskUsage = diskUsage.UsedPercent
 
