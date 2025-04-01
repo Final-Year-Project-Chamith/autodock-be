@@ -25,7 +25,7 @@ func AnalyzeContainerLogs(containerId string) (*AnalysisResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(logs)
 	payload := map[string]interface{}{
 		"logs": logs,
 	}

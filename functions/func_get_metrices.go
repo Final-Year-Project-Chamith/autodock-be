@@ -2,7 +2,6 @@ package functions
 
 import (
 	"autodock-be/dto"
-	"fmt"
 	"time"
 
 	"github.com/shirou/gopsutil/v3/cpu"
@@ -24,9 +23,6 @@ func GetUsageMetrices() (*dto.Metrics, error) {
 	if err != nil {
 		return nil, err
 	}
-	fmt.Println("total ram", ramPercentage.Total)
-	fmt.Println("total cpu", cpuPercentage[0])
-	fmt.Println("total storage",diskUsage.Total)
 	metrics.CPUUsage = cpuPercentage[0]
 	metrics.MemoryUsage = ramPercentage.UsedPercent
 	metrics.DiskUsage = diskUsage.UsedPercent
