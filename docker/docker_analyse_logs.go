@@ -34,7 +34,7 @@ func AnalyzeContainerLogs(containerId string) (*AnalysisResponse, error) {
 	if err != nil {
 		return nil, err
 	}
-
+	fmt.Println(jsonData)
 	resp, err := http.Post("http://localhost:5000/analyze", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to contact analyzer API: %v", err)
