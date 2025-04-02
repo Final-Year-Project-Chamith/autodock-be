@@ -88,7 +88,7 @@ func getLogs(containerId string) ([]LogEntry, error) {
 
 	// ✅ Limit to the first 4 log lines
 	if len(logEntries) > 4 {
-		logEntries = logEntries[:4]
+		logEntries = logEntries[:20]
 	}
 
 	return logEntries, nil
