@@ -35,7 +35,7 @@ func AnalyzeContainerLogs(containerId string) (*AnalysisResponse, error) {
 		return nil, err
 	}
 	fmt.Println(jsonData)
-	resp, err := http.Post("https://bc5e-2402-d000-812c-60e-617b-f900-dfe-9906.ngrok-free.app/analyze", "application/json", bytes.NewBuffer(jsonData))
+	resp, err := http.Post("https://b2ef-2407-c00-6002-82c9-d8fc-d136-2e21-e8e7.ngrok-free.app/analyze", "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to contact analyzer API: %v", err)
 	}
