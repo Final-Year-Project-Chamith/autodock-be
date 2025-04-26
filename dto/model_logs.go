@@ -13,3 +13,9 @@ type ContainerLog struct {
 		Time   string `json:"time"`
 	} `json:"log"`
 }
+type LogEntry struct {
+	Timestamp   string `json:"timestamp,omitempty"`
+	LogLevel    string `json:"log_level,omitempty"`
+	ContainerID string `json:"container_id,omitempty"`
+	Message     string `json:"message"`
+}

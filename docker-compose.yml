@@ -1,0 +1,11 @@
+services:
+  autodock-be:
+    container_name: autodock-be-container
+    image: chamixth/autodock-be
+    restart: always
+    ports:
+      - "8001:8888"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /home/admin:/app/docker-compose
+      - /etc/nginx/conf.d:/app/nginx.conf
